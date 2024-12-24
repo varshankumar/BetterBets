@@ -7,6 +7,7 @@ from bson import ObjectId
 from dotenv import load_dotenv
 from datetime import datetime
 import os
+import certifi
 
 # Load environment variables from .env file
 load_dotenv()
@@ -18,8 +19,13 @@ app = Flask(__name__,
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 CORS(app)
 
-# Initialize MongoDB with URI from .env
-client = MongoClient(os.getenv('MONGODB_URI'))
+# Initialize MongoDB with URI from .env and proper SSL config
+client = MongoClient(
+    os.getenv('MONGODB_URI'),
+    tlsCAFile=certifi.where(),
+    ssl=True,
+    ssl_cert_reqs='CERT_REQUIRED'
+)
 db = client.betterbets
 
 # Initialize Flask-Login
