@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterBets - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="{{ url_for('index') }}" class="site-title">BetterBets</a>
+                <div class="nav-links">
+                    {% if current_user.is_authenticated %}
+                        <div class="user-info">
+                            <span>{{ current_user.username }}</span>
+                            <span class="balance">${{ "%.2f"|format(current_user.balance) }}</span>
+                        </div>
+                        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+                        <a href="{{ url_for('register') }}" class="btn">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if current_user.is_authenticated %}
+            <div class="nav-tabs">
+                <a href="{{ url_for('index') }}" class="nav-tab {% if request.endpoint == 'index' %}active{% endif %}">Active Bets</a>
+                <a href="{{ url_for('create_bet') }}" class="nav-tab {% if request.endpoint == 'create_bet' %}active{% endif %}">Create Bet</a>
+                <a href="#" class="nav-tab">My Bets</a>
+                <a href="#" class="nav-tab">History</a>
+            </div>
+
+            <div class="bets-container">
+                {% for bet in bets %}
+                    <div class="bet-card">
+                        <h3>{{ bet.title }}</h3>
+                        <p>{{ bet.description }}</p>
+                        <div class="bet-details">
+                            <span>Min Entry: ${{ "%.2f"|format(bet.min_entry) }}</span>
+                            <span>Max Entry: ${{ "%.2f"|format(bet.max_entry) }}</span>
+                            <span>Total Pot: ${{ "%.2f"|format(bet.total_pot) }}</span>
+                        </div>
+                        <a href="{{ url_for('bet_details', bet_id=bet._id) }}" class="btn btn-primary">View Details</a>
+                    </div>
+                {% else %}
+                    <p>No active bets available.</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="welcome-section">
+                <h1>Welcome to BetterBets</h1>
+                <p>Join our community to start creating and participating in bets.</p>
+                <div class="welcome-actions">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Get Started</a>
+                    <a href="{{ url_for('register') }}" class="btn">Create Account</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
