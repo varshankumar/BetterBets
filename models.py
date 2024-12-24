@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
+from datetime import datetime
 
 class User(UserMixin):
     def __init__(self, user_data):
@@ -64,5 +65,35 @@ def create_bet_document(creator_id, title, description, is_private, min_entry,
         'participants': []
     }
 
+def create_game_document(creator_id, title, description, end_date, bets):
+    """
+    bets: list of dictionaries containing bet info
+    {
+        'title': str,
+        'type': 'over_under' | 'binary',
+        'line': float,  # for over/under bets
+        'odds': {
+            'over': float,  # e.g., -110 for standard odds
+            'under': float
+        }
+    }
+    """
+    return {
+        'creator_id': ObjectId(creator_id),
+        'title': title,
+        'description': description,
+        'end_date': end_date,
+        'status': 'open',
+        'total_pot': 0.0,
+        'bets': [
+            {
+                **bet,
+                'total_pot': 0.0,
+                'participants': []
+            } for bet in bets
+        ],
+        'created_at': datetime.utcnow()
+    }
+
 # Make sure we explicitly define what should be imported
-__all__ = ['User', 'create_bet_document']
+__all__ = ['User', 'create_bet_document', 'create_game_document']

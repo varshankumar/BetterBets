@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Bet - BetterBets</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Place Your Bet</h1>
+        <form action="/bet/create" method="post">
+            <div class="form-group">
+                <label for="game_select">Select Game:</label>
+                <select id="game_select" name="game_id" required>
+                    <option value="">Select a game...</option>
+                    {% for game in games %}
+                        <option value="{{ game._id }}">{{ game.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="team_choice">Select Team:</label>
+                <select id="team_choice" name="team_choice" required>
+                    {% if games %}
+                        {% for game in games %}
+                            <option value="{{ game.team1_name }}" data-multiplier="{{ game.team1_multiplier }}" data-game-id="{{ game._id }}">
+                                {{ game.team1_name }} ({{ game.team1_multiplier }}x)
+                            </option>
+                            <option value="{{ game.team2_name }}" data-multiplier="{{ game.team2_multiplier }}" data-game-id="{{ game._id }}">
+                                {{ game.team2_name }} ({{ game.team2_multiplier }}x)
+                            </option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">No games available</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="bet_amount">Bet Amount:</label>
+                <input type="number" id="bet_amount" name="bet_amount" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <p>Potential Winnings: $<span id="potential_winnings">0.00</span></p>
+            </div>
+
+            <button type="submit" class="btn">Place Bet</button>
+        </form>
+        <a href="/" class="btn-link">Back to Games</a>
+    </div>
+
+    <script>
+        const gameSelect = document.getElementById('game_select');
+        const teamSelect = document.getElementById('team_choice');
+        const betAmount = document.getElementById('bet_amount');
+        
+        function updateTeamOptions() {
+            const selectedGameId = gameSelect.value;
+            const options = teamSelect.options;
+            
+            for (let option of options) {
+                if (option.dataset.gameId === selectedGameId) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+            
+            // Reset team selection
+            teamSelect.value = '';
+            calculateWinnings();
+        }
+
+        function calculateWinnings() {
+            const amount = parseFloat(betAmount.value) || 0;
+            const selected = teamSelect.selectedOptions[0];
+            const multiplier = parseFloat(selected?.dataset?.multiplier) || 0;
+            const winnings = (amount * multiplier).toFixed(2);
+            document.getElementById('potential_winnings').textContent = winnings;
+        }
+
+        gameSelect.addEventListener('change', updateTeamOptions);
+        teamSelect.addEventListener('change', calculateWinnings);
+        betAmount.addEventListener('input', calculateWinnings);
+
+        // Initialize team options on page load
+        updateTeamOptions();
+    </script>
+</body>
+</html>

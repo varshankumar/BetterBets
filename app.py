@@ -112,6 +112,9 @@ def get_bets():
 @app.route('/bet/create', methods=['GET', 'POST'])
 @login_required
 def create_bet():
+    # Get all available games from the database
+    games = list(db.games.find({'status': 'open'}))
+    
     if request.method == 'POST':
         # Handle API requests (JSON data)
         if request.is_json:
@@ -148,7 +151,7 @@ def create_bet():
             flash(f'Error creating bet: {str(e)}', 'error')
             return render_template('create_bet.html')
     
-    return render_template('create_bet.html')
+    return render_template('create_bet.html', games=games)
 
 @app.route('/logout')
 @login_required
@@ -214,6 +217,92 @@ def index():
 @app.route('/<path:path>')
 def static_file(path):
     return send_from_directory('static', path)
+
+def calculate_processing_fee(amount):
+    """Calculate processing fee for deposit amount"""
+    percentage_fee = 0.029  # 2.9%
+    fixed_fee = 0.30       # $0.30
+    return (amount * percentage_fee) + fixed_fee
+
+@app.route('/deposit', methods=['GET', 'POST'])
+@login_required
+def deposit():
+    if request.method == 'POST':
+        try:
+            amount = float(request.form.get('amount', 0))
+            if amount < 5 or amount > 1000:
+                flash('Amount must be between $5 and $1000', 'error')
+                return render_template('deposit.html')
+
+            processing_fee = calculate_processing_fee(amount)
+            total_amount = amount + processing_fee
+
+            # Update user's balance with the actual deposit amount
+            db.users.update_one(
+                {'_id': ObjectId(current_user.id)},
+                {'$inc': {'balance': amount}}
+            )
+            
+            flash(f'Successfully added ${amount:.2f} to your account! (Processing fee: ${processing_fee:.2f})', 'success')
+            return redirect(url_for('index'))
+            
+        except ValueError:
+            flash('Invalid amount specified', 'error')
+            return render_template('deposit.html')
+            
+    return render_template('deposit.html')
+
+@app.route('/game/create', methods=['GET', 'POST'])
+@login_required
+def create_game():
+    if request.method == 'POST':
+        try:
+            betting_lines = []
+            form_data = request.form.to_dict(flat=False)
+            line_count = len([k for k in form_data.keys() if k.startswith('lines[') and k.endswith('].title')])
+            
+            for i in range(line_count):
+                line = {
+                    'title': request.form.get(f'lines[{i}].title'),
+                    'options': [
+                        {
+                            'title': request.form.get(f'lines[{i}].option1_title'),
+                            'odds': float(request.form.get(f'lines[{i}].option1_odds')),
+                            'multiplier': float(request.form.get(f'lines[{i}].option1_multiplier'))
+                        },
+                        {
+                            'title': request.form.get(f'lines[{i}].option2_title'),
+                            'odds': float(request.form.get(f'lines[{i}].option2_odds')),
+                            'multiplier': float(request.form.get(f'lines[{i}].option2_multiplier'))
+                        }
+                    ]
+                }
+                betting_lines.append(line)
+
+            game = {
+                'creator_id': ObjectId(current_user.id),
+                'title': request.form.get('title'),
+                'description': request.form.get('description'),
+                'betting_lines': betting_lines,
+                'end_date': datetime.strptime(request.form.get('end_date'), '%Y-%m-%dT%H:%M'),
+                'status': 'open',
+                'created_at': datetime.utcnow()
+            }
+            
+            db.games.insert_one(game)
+            flash('Game created successfully!', 'success')
+            return redirect(url_for('index'))
+            
+        except (ValueError, TypeError) as e:
+            flash(f'Error creating game: {str(e)}', 'error')
+            return render_template('create_game.html')
+    
+    return render_template('create_game.html')
+
+@app.route('/games')
+def list_games():
+    games = list(db.games.find({'status': 'open'}))
+    return render_template('games.html', games=games)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

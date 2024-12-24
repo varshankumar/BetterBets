@@ -2,7 +2,8 @@
     max-width: 400px;
     margin: 40px auto;
     padding: 2.5rem;
-    background: white;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     box-sizing: border-box;
@@ -38,18 +39,20 @@
     padding: 0.75rem 1rem;
     font-size: 1rem;
     line-height: 1.5;
+    background-color: var(--background-color);
     border: 2px solid var(--border-color);
     border-radius: 0.5rem;
     transition: border-color 0.2s ease;
     box-sizing: border-box;
     margin: 0;
     display: block;
+    color: var(--text-color);
 }
 
 .auth-form .form-control:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .form-group label {
@@ -64,7 +67,7 @@
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--text-light);
 }
 
 .auth-form .btn {
@@ -78,7 +81,7 @@
     text-align: center;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--border-color);
 }
 
 .auth-footer a {

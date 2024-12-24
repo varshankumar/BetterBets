@@ -1,14 +1,16 @@
 :root {
   --primary-color: #3b82f6;
   --primary-dark: #2563eb;
-  --secondary-color: #64748b;
-  --background-color: #f8fafc;
-  --surface-color: #ffffff;
-  --text-color: #1e293b;
-  --text-light: #64748b;
+  --secondary-color: #1e293b;
+  --background-color: #0f172a;
+  --surface-color: #1e293b;
+  --text-color: #f8fafc;
+  --text-light: #cbd5e1;
+  --border-color: #334155;
   --danger-color: #ef4444;
   --success-color: #22c55e;
-  --border-color: #e2e8f0;
+  --card-bg: #1e293b;
+  --header-bg: #0f172a;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
@@ -23,7 +25,7 @@ body {
 }
 
 .navbar {
-  background-color: var(--surface-color);
+  background-color: var(--header-bg);
   padding: 1rem 0;
   border-bottom: 1px solid var(--border-color);
   position: sticky;
@@ -47,10 +49,43 @@ body {
 
 .nav-tabs {
   display: flex;
-  gap: 2rem;
+  justify-content: space-between;
+  align-items: center;
   margin: 2rem 0;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 0;
+}
+
+.tabs-left {
+  display: flex;
+  gap: 2rem;
+}
+
+.tabs-right {
+  margin-left: auto;
+}
+
+.btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-create:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.plus-icon {
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .nav-tab {
@@ -83,9 +118,10 @@ body {
   align-items: center;
   gap: 1rem;
   padding: 0.5rem 1rem;
-  background-color: var(--background-color);
+  background-color: var(--surface-color);
   border-radius: 0.5rem;
   font-size: 0.875rem;
+  color: var(--text-light);
 }
 
 .balance {
@@ -102,18 +138,31 @@ body {
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.2s;
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
   cursor: pointer;
+  background-color: var(--surface-color);
+  color: var(--text-light);
 }
 
 .btn-primary {
   background-color: var(--primary-color);
   color: white;
+  border: none;
 }
 
 .btn-primary:hover {
   background-color: var(--primary-dark);
   transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+  margin-top: 1rem;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
 }
 
 /* Bet Cards */
@@ -125,7 +174,7 @@ body {
 }
 
 .bet-card {
-  background: var(--surface-color);
+  background: var(--card-bg);
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
@@ -135,7 +184,7 @@ body {
 
 .bet-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .bet-card h3 {
@@ -208,6 +257,166 @@ body {
   justify-content: center;
 }
 
+/* Game Form */
+.game-form {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: var(--surface-color);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section h2 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.bet-item {
+  background: var(--background-color);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.bet-item h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+/* Game Form Styles */
+.page-header {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.page-header .subtitle {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+.form-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden; /* Prevents content from spilling out */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 2fr) minmax(80px, 1fr) minmax(80px, 1fr);
+    gap: 1rem;
+    margin-bottom: 0;
+    max-width: 100%;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var (--text-light);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Add input type number styling */
+.form-group input[type="number"] {
+    -moz-appearance: textfield;
+    min-width: 0; /* Prevents input from expanding beyond container */
+    max-width: 120px; /* Sets maximum width for number inputs */
+}
+
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.bet-item {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.bet-item h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
 /* Container */
 .container {
   max-width: 1200px;
@@ -230,4 +439,60 @@ body {
   .welcome-section h1 {
     font-size: 2rem;
   }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+    
+  .form-card {
+    padding: 1rem;
+  }
+
+  .form-group input[type="number"] {
+    max-width: 100%; /* Allow full width on mobile */
+  }
+}
+
+/* New Styles */
+.bet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.btn-icon {
+    padding: 0.25rem 0.5rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--text-light);
+    background: none;
+    border: none;
+}
+
+.btn-icon:hover {
+    color: var(--danger-color);
+}
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.bet-option {
+    padding: 1rem;
+    background: var(--surface-color);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    max-width: 100%;
+}
+
+.bet-option h4 {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+    font-weight: 500;
 }

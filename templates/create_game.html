@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Game - BetterBets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="{{ url_for('index') }}" class="site-title">BetterBets</a>
+                <div class="nav-links">
+                    {% if current_user.is_authenticated %}
+                        <div class="user-info">
+                            <span>{{ current_user.username }}</span>
+                            <span class="balance">${{ "%.2f"|format(current_user.balance) }}</span>
+                        </div>
+                        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Create New Game</h1>
+            <p class="subtitle">Set up a new game with custom betting lines</p>
+        </div>
+
+        <form class="game-form" action="{{ url_for('create_game') }}" method="post">
+            <div class="form-card">
+                <div class="form-section">
+                    <h2>Game Details</h2>
+                    <div class="form-group">
+                        <label for="game_title">Game Title</label>
+                        <input type="text" id="game_title" name="title" required 
+                               placeholder="e.g., Super Bowl LVIII">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="game_description">Description</label>
+                        <textarea id="game_description" name="description" rows="3" 
+                                 placeholder="Add any important details about the game"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="game_datetime">End Date and Time</label>
+                        <input type="datetime-local" id="game_datetime" name="end_date" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h2>Betting Lines</h2>
+                        <button type="button" class="btn btn-secondary" onclick="addBettingLine()">
+                            <span class="plus-icon">+</span> Add Line
+                        </button>
+                    </div>
+                    <div id="betting-lines">
+                        <!-- Betting lines will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Game</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let lineCount = 0;
+
+        function addBettingLine() {
+            const container = document.getElementById('betting-lines');
+            const lineHtml = `
+                <div class="bet-item" id="line-${lineCount}">
+                    <div class="bet-header">
+                        <h3>Betting Line ${lineCount + 1}</h3>
+                        <button type="button" class="btn btn-icon" onclick="removeLine(${lineCount})">×</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Line Title</label>
+                        <input type="text" name="lines[${lineCount}].title" required
+                               placeholder="e.g., Match Winner, Total Points, etc.">
+                    </div>
+                    <div class="options-container">
+                        <div class="bet-option">
+                            <h4>Option 1</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input type="text" name="lines[${lineCount}].option1_title" required
+                                           placeholder="e.g., Chiefs Win">
+                                </div>
+                                <div class="form-group">
+                                    <label>Odds</label>
+                                    <input type="number" name="lines[${lineCount}].option1_odds" required
+                                           step="0.01" min="1.01" placeholder="e.g., 2.50">
+                                </div>
+                                <div class="form-group">
+                                    <label>Multiplier</label>
+                                    <input type="number" name="lines[${lineCount}].option1_multiplier" required
+                                           step="0.1" min="0.1" placeholder="e.g., 1.5">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bet-option">
+                            <h4>Option 2</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <input type="text" name="lines[${lineCount}].option2_title" required
+                                           placeholder="e.g., 49ers Win">
+                                </div>
+                                <div class="form-group">
+                                    <label>Odds</label>
+                                    <input type="number" name="lines[${lineCount}].option2_odds" required
+                                           step="0.01" min="1.01" placeholder="e.g., 1.80">
+                                </div>
+                                <div class="form-group">
+                                    <label>Multiplier</label>
+                                    <input type="number" name="lines[${lineCount}].option2_multiplier" required
+                                           step="0.1" min="0.1" placeholder="e.g., 2.0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', lineHtml);
+            lineCount++;
+        }
+
+        function removeLine(id) {
+            const line = document.getElementById(`line-${id}`);
+            line.remove();
+        }
+
+        // Add first betting line by default
+        addBettingLine();
+    </script>
+</body>
+</html>

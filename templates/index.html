@@ -17,6 +17,7 @@
                         <div class="user-info">
                             <span>{{ current_user.username }}</span>
                             <span class="balance">${{ "%.2f"|format(current_user.balance) }}</span>
+                            <a href="{{ url_for('deposit') }}" class="btn btn-primary">Deposit</a>
                         </div>
                         <a href="{{ url_for('logout') }}" class="btn">Logout</a>
                     {% else %}
@@ -39,10 +40,17 @@
 
         {% if current_user.is_authenticated %}
             <div class="nav-tabs">
-                <a href="{{ url_for('index') }}" class="nav-tab {% if request.endpoint == 'index' %}active{% endif %}">Active Bets</a>
-                <a href="{{ url_for('create_bet') }}" class="nav-tab {% if request.endpoint == 'create_bet' %}active{% endif %}">Create Bet</a>
-                <a href="#" class="nav-tab">My Bets</a>
-                <a href="#" class="nav-tab">History</a>
+                <div class="tabs-left">
+                    <a href="{{ url_for('index') }}" class="nav-tab {% if request.endpoint == 'index' %}active{% endif %}">Active Bets</a>
+                    <a href="#" class="nav-tab">My Bets</a>
+                    <a href="#" class="nav-tab">History</a>
+                </div>
+                <div class="tabs-right">
+                    <a href="{{ url_for('create_game') }}" class="btn btn-create">
+                        <span class="plus-icon">+</span>
+                        Create Game
+                    </a>
+                </div>
             </div>
 
             <div class="bets-container">
