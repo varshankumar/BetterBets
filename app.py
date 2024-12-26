@@ -327,4 +327,4 @@ def list_games():
     return render_template('games.html', games=games)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)), debug=False)
