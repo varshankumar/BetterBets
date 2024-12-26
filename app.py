@@ -22,6 +22,9 @@ app = Flask(__name__,
 )
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+port = int(os.getenv('PORT', '8080'))
+app.config['SERVER_NAME'] = f"0.0.0.0:{port}"
+
 # --------------------- MongoDB Configuration ---------------------
 MONGODB_URI = os.getenv('MONGODB_URI')
 if not MONGODB_URI:
@@ -345,5 +348,4 @@ def internal_server_error(e):
 
 # --------------------- Run the App ---------------------
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 10000))
     app.run(host='0.0.0.0', port=port)

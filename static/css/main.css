@@ -496,3 +496,30 @@ body {
     margin: 0 0 1rem 0;
     font-weight: 500;
 }
+
+/* Error Pages */
+.error-page {
+    text-align: center;
+    padding: 6rem 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-page h1 {
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
+    line-height: 1;
+}
+
+.error-page h2 {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin: 1rem 0;
+}
+
+.error-page p {
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
