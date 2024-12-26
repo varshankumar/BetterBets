@@ -23,8 +23,7 @@ CORS(app)
 client = MongoClient(
     os.getenv('MONGODB_URI'),
     tlsCAFile=certifi.where(),
-    ssl=True,
-    ssl_cert_reqs='CERT_REQUIRED'
+    tls=True
 )
 db = client.betterbets
 
