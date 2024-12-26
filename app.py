@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import logging
 import certifi
+import ssl
 
 # --------------------- Logging Configuration ---------------------
 logging.basicConfig(
@@ -32,11 +33,15 @@ if not MONGODB_URI:
     logger.error("MONGODB_URI not found in environment variables.")
     raise EnvironmentError("MONGODB_URI not found in environment variables.")
 
+ssl_context = ssl.create_default_context()
+ssl_context.load_verify_locations(certifi.where())
+
 try:
     client = MongoClient(
         MONGODB_URI, 
-        tls=True, 
-        tlsCAFile=certifi.where()
+        ssl=True, 
+        ssl_cert_reqs=ssl.CERT_REQUIRED,
+        sslContext=ssl_context
     )
     db = client.betterbets
     logger.info("MongoDB client initialized successfully with TLS.")
