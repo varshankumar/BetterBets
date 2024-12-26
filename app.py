@@ -2,30 +2,51 @@ from flask import Flask, send_from_directory, jsonify, request, render_template,
 from flask_cors import CORS
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from pymongo import MongoClient
-from models import User, create_bet_document  # This line should now work
+from models import User, create_bet_document
 from bson import ObjectId
 from dotenv import load_dotenv
 from datetime import datetime
 import os
 import certifi
+import logging
 
-# Load environment variables from .env file
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[logging.FileHandler("app.log"), logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
+
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__, 
-    static_folder='static',  # Change static folder
-    template_folder='templates'  # Add template folder
+    static_folder='static',
+    template_folder='templates'
 )
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 CORS(app)
 
-# Initialize MongoDB with URI from .env and proper SSL config
-client = MongoClient(
-    os.getenv('MONGODB_URI'),
-    tlsCAFile=certifi.where(),
-    tls=True
-)
-db = client.betterbets
+# Initialize MongoDB with proper error handling
+MONGODB_URI = os.getenv('MONGODB_URI')
+if not MONGODB_URI:
+    logger.error("MONGODB_URI not found in environment variables.")
+    raise EnvironmentError("MONGODB_URI not found in environment variables.")
+
+try:
+    client = MongoClient(
+        MONGODB_URI,
+        tlsCAFile=certifi.where(),
+        tls=True
+    )
+    # Test the connection
+    client.admin.command('ping')
+    db = client.betterbets
+    logger.info("Connected to MongoDB successfully.")
+except Exception as e:
+    logger.error(f"Failed to connect to MongoDB: {e}")
+    raise e
 
 # Initialize Flask-Login
 login_manager = LoginManager()
