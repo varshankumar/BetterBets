@@ -1,5 +1,4 @@
 from flask import Flask, send_from_directory, jsonify, request, render_template, redirect, url_for, flash
-from flask_cors import CORS
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from pymongo import MongoClient
 from models import User, create_bet_document
