@@ -32,9 +32,13 @@ if not MONGODB_URI:
     raise EnvironmentError("MONGODB_URI not found in environment variables.")
 
 try:
-    client = MongoClient(MONGODB_URI)
+    client = MongoClient(
+        MONGODB_URI, 
+        tls=True, 
+        tlsAllowInvalidCertificates=True  # remove if you have a valid cert
+    )
     db = client.betterbets
-    logger.info("MongoDB client initialized successfully.")
+    logger.info("MongoDB client initialized successfully with TLS.")
 except Exception as e:
     logger.error(f"Failed to initialize MongoDB client: {e}")
     raise e
