@@ -6,6 +6,7 @@ from bson.objectid import ObjectId  # More specific import
 from datetime import datetime
 import os
 import logging
+import certifi
 
 # --------------------- Logging Configuration ---------------------
 logging.basicConfig(
@@ -35,7 +36,7 @@ try:
     client = MongoClient(
         MONGODB_URI, 
         tls=True, 
-        tlsAllowInvalidCertificates=True  # remove if you have a valid cert
+        tlsCAFile=certifi.where()
     )
     db = client.betterbets
     logger.info("MongoDB client initialized successfully with TLS.")
