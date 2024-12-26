@@ -35,11 +35,7 @@ if not MONGODB_URI:
     raise EnvironmentError("MONGODB_URI not found in environment variables.")
 
 try:
-    client = MongoClient(
-        MONGODB_URI,
-        tlsCAFile=certifi.where(),
-        tls=True
-    )
+    client = MongoClient(MONGODB_URI)
     # Test the connection
     client.admin.command('ping')
     db = client.betterbets
