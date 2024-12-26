@@ -24,7 +24,6 @@ app = Flask(__name__,
     template_folder='templates'
 )
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-CORS(app)
 
 # Initialize MongoDB with proper error handling
 MONGODB_URI = os.getenv('MONGODB_URI')
