@@ -7,7 +7,6 @@ from bson import ObjectId
 from dotenv import load_dotenv
 from datetime import datetime
 import os
-import certifi
 import logging
 
 # Configure logging
