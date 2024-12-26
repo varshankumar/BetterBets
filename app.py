@@ -37,7 +37,6 @@ if not MONGODB_URI:
 try:
     client = MongoClient(MONGODB_URI)
     # Test the connection
-    client.admin.command('ping')
     db = client.betterbets
     logger.info("Connected to MongoDB successfully.")
 except Exception as e:
