@@ -2,13 +2,12 @@ from flask import Flask, send_from_directory, jsonify, request, render_template,
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from pymongo import MongoClient
 from models import User, create_bet_document
-from bson import ObjectId
-from dotenv import load_dotenv
+from bson.objectid import ObjectId  # More specific import
 from datetime import datetime
 import os
 import logging
 
-# Configure logging
+# --------------------- Logging Configuration ---------------------
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
@@ -16,16 +15,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Load environment variables
-load_dotenv()
-
+# --------------------- App Configuration ---------------------
 app = Flask(__name__, 
     static_folder='static',
     template_folder='templates'
 )
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-# Initialize MongoDB with proper error handling
+# --------------------- MongoDB Configuration ---------------------
 MONGODB_URI = os.getenv('MONGODB_URI')
 if not MONGODB_URI:
     logger.error("MONGODB_URI not found in environment variables.")
@@ -33,22 +30,37 @@ if not MONGODB_URI:
 
 try:
     client = MongoClient(MONGODB_URI)
-    # Test the connection
     db = client.betterbets
-    logger.info("Connected to MongoDB successfully.")
+    logger.info("MongoDB client initialized successfully.")
 except Exception as e:
-    logger.error(f"Failed to connect to MongoDB: {e}")
+    logger.error(f"Failed to initialize MongoDB client: {e}")
     raise e
 
-# Initialize Flask-Login
+# --------------------- Login Manager Configuration ---------------------
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    user_data = db.users.find_one({'_id': ObjectId(user_id)})
-    return User(user_data) if user_data else None
+    try:
+        user_data = db.users.find_one({'_id': ObjectId(user_id)})
+        return User(user_data) if user_data else None
+    except Exception as e:
+        logger.error(f"Error loading user: {e}")
+        return None
+
+# --------------------- Helper Functions ---------------------
+def handle_db_error(operation):
+    """Decorator for handling database operations"""
+    def wrapper(*args, **kwargs):
+        try:
+            return operation(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Database error in {operation.__name__}: {e}")
+            flash("An error occurred. Please try again.", "error")
+            return None
+    return wrapper
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -322,5 +334,16 @@ def list_games():
     games = list(db.games.find({'status': 'open'}))
     return render_template('games.html', games=games)
 
+# --------------------- Error Handlers ---------------------
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html', message="Page not found."), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html', message="Internal server error."), 500
+
+# --------------------- Run the App ---------------------
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)), debug=False)
+    port = int(os.getenv('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
