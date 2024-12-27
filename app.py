@@ -33,22 +33,17 @@ if not MONGODB_URI:
     logger.error("MONGODB_URI not found in environment variables.")
     raise EnvironmentError("MONGODB_URI not found in environment variables.")
 
-ssl_context = ssl.create_default_context()
-ssl_context.load_verify_locations(certifi.where())
-
 try:
     client = MongoClient(
-        MONGODB_URI, 
-        ssl=True, 
-        ssl_cert_reqs=ssl.CERT_REQUIRED,
-        sslContext=ssl_context
+        MONGODB_URI,
+        tls=True, 
+        tlsCAFile=certifi.where()
     )
     db = client.betterbets
     logger.info("MongoDB client initialized successfully with TLS.")
 except Exception as e:
     logger.error(f"Failed to initialize MongoDB client: {e}")
     raise e
-
 # --------------------- Login Manager Configuration ---------------------
 login_manager = LoginManager()
 login_manager.init_app(app)
