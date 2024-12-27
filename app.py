@@ -6,7 +6,6 @@ from bson.objectid import ObjectId  # More specific import
 from datetime import datetime
 import os
 import logging
-import certifi
 
 # --------------------- Logging Configuration ---------------------
 logging.basicConfig(
@@ -33,11 +32,7 @@ if not MONGODB_URI:
     raise EnvironmentError("MONGODB_URI not found in environment variables.")
 
 try:
-    client = MongoClient(
-        MONGODB_URI,
-        tls=True, 
-        tlsCAFile=certifi.where()
-    )
+    client = MongoClient(MONGODB_URI, )
     db = client.betterbets
     logger.info("MongoDB client initialized successfully with TLS.")
 except Exception as e:
@@ -352,4 +347,4 @@ def internal_server_error(e):
 
 # --------------------- Run the App ---------------------
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)), debug=False)
