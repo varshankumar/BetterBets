@@ -7,7 +7,6 @@ from datetime import datetime
 import os
 import logging
 import certifi
-import ssl
 
 # --------------------- Logging Configuration ---------------------
 logging.basicConfig(
